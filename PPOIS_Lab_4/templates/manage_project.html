@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}Управление проектом: {{ project.project_name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="card-title mb-0">Проект: {{ project.project_name }}</h4>
+                <a href="{{ url_for('delete_project', project_id=project.id) }}"
+                   class="btn btn-danger btn-sm confirm-action"
+                   data-confirm-text="Вы действительно хотите удалить проект '{{ project.project_name }}'?">
+                   Удалить
+                </a>
+            </div>
+            <div class="card-body">
+                <p><strong>Описание:</strong> {{ project.description }}</p>
+                <p><strong>Клиент:</strong> {{ project.customer.contact_details }}</p>
+                <p><strong>Бюджет клиента:</strong> ${{ project.customer.budget }}</p>
+                <p><strong>Дата создания:</strong> {{ project.created_at.strftime('%d.%m.%Y %H:%M') }}</p>
+                <p><strong>Последнее обновление:</strong> {{ project.updated_at.strftime('%d.%m.%Y %H:%M') if project.updated_at else 'Нет' }}</p>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title">Статус проекта</h5>
+            </div>
+            <div class="card-body">
+                <div class="progress mb-3">
+                    {% set progress = [project.requirements_analyzed, project.code_developed, 
+                                      project.tested, project.deployed, project.users_trained]|select|list|length * 20 %}
+                    <div class="progress-bar" role="progressbar" style="width: {{ progress }}%" 
+                         aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100">
+                        {{ progress }}%
+                    </div>
+                </div>
+                <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Требования проанализированы
+                        <span class="badge bg-{% if project.requirements_analyzed %}success{% else %}secondary{% endif %} rounded-pill">
+                            {% if project.requirements_analyzed %}Да{% else %}Нет{% endif %}
+                        </span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Код разработан
+                        <span class="badge bg-{% if project.code_developed %}success{% else %}secondary{% endif %} rounded-pill">
+                            {% if project.code_developed %}Да{% else %}Нет{% endif %}
+                        </span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Протестирован
+                        <span class="badge bg-{% if project.tested %}success{% else %}secondary{% endif %} rounded-pill">
+                            {% if project.tested %}Да{% else %}Нет{% endif %}
+                        </span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Внедрен
+                        <span class="badge bg-{% if project.deployed %}success{% else %}secondary{% endif %} rounded-pill">
+                            {% if project.deployed %}Да{% else %}Нет{% endif %}
+                        </span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Обучение пользователей
+                        <span class="badge bg-{% if project.users_trained %}success{% else %}secondary{% endif %} rounded-pill">
+                            {% if project.users_trained %}Да{% else %}Нет{% endif %}
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Действия</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <button type="submit" name="action" value="analyze" 
+                                class="btn btn-{% if project.requirements_analyzed %}outline-success{% else %}primary{% endif %} w-100"
+                                {% if project.requirements_analyzed %}disabled{% endif %}>
+                            Анализ требований
+                        </button>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex">
+                            <button type="submit" name="action" value="develop" 
+                                    class="btn btn-{% if project.code_developed %}outline-success{% else %}{% if project.requirements_analyzed %}primary{% else %}secondary{% endif %}{% endif %} flex-grow-1"
+                                    {% if project.code_developed or not project.requirements_analyzed %}disabled{% endif %}>
+                                Разработка кода
+                            </button>
+                            {% if company.programmers %}
+                                <select name="developer" class="form-select ms-2" style="width: 200px;"
+                                        {% if project.code_developed or not project.requirements_analyzed %}disabled{% endif %}>
+                                    {% for programmer in company.programmers %}
+                                        <option value="{{ programmer.id }}">
+                                            {{ programmer.name }} ({{ programmer.sphere }})
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            {% else %}
+                                <span class="ms-2 text-danger">Нет программистов</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <button type="submit" name="action" value="test" 
+                                class="btn btn-{% if project.tested %}outline-success{% else %}{% if project.code_developed %}primary{% else %}secondary{% endif %}{% endif %} w-100"
+                                {% if project.tested or not project.code_developed %}disabled{% endif %}>
+                            Тестирование
+                        </button>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex align-items-center">
+                            <button type="submit" name="action" value="deploy" 
+                                    class="btn btn-{% if project.deployed %}outline-success{% else %}{% if project.tested %}primary{% else %}secondary{% endif %}{% endif %} flex-grow-1"
+                                    {% if project.deployed or not project.tested %}disabled{% endif %}>
+                                Внедрение
+                            </button>
+                            {% if company.tech_supports %}
+                                <select name="tech_support" class="form-select ms-2" style="width: 150px;"
+                                        {% if project.deployed or not project.tested %}disabled{% endif %}>
+                                    {% for tech in company.tech_supports %}
+                                        <option value="{{ tech.id }}">
+                                            {{ tech.responsibility_area }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                <input type="number" name="duration" placeholder="Секунды" 
+                                       class="form-control ms-2" style="width: 100px;"
+                                       min="1" {% if project.deployed or not project.tested %}disabled{% endif %}>
+                            {% else %}
+                                <span class="ms-2 text-danger">Нет поддержки</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <button type="submit" name="action" value="train" 
+                                class="btn btn-{% if project.users_trained %}outline-success{% else %}{% if project.deployed %}primary{% else %}secondary{% endif %}{% endif %} w-100"
+                                {% if project.users_trained or not project.deployed %}disabled{% endif %}>
+                            Обучение пользователей
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<a href="{{ url_for('index') }}" class="btn btn-secondary mt-3">Назад к списку проектов</a>
+{% endblock %}

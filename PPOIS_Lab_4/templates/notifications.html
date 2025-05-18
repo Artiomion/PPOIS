@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Уведомления{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Ваши уведомления</h2>
+        <button id="mark-all-read" class="btn btn-sm btn-outline-secondary">
+            Пометить все как прочитанные
+        </button>
+    </div>
+
+    {% if notifications %}
+        <div class="list-group">
+            {% for notification in notifications %}
+                <a href="#" class="list-group-item list-group-item-action {% if not notification.is_read %}list-group-item-light{% endif %}">
+                    <div class="d-flex w-100 justify-content-between">
+                        <p class="mb-1">{{ notification.message }}</p>
+                        <small class="text-muted">
+                            {{ notification.created_at.strftime('%d.%m.%Y %H:%M') }}
+                        </small>
+                    </div>
+                    {% if notification.related_entity_type %}
+                        <small class="text-muted">
+                            Связано с: {{ notification.related_entity_type }}
+                        </small>
+                    {% endif %}
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            У вас нет новых уведомлений
+        </div>
+    {% endif %}
+</div>
+
+<script>
+document.getElementById('mark-all-read').addEventListener('click', function() {
+    fetch("{{ url_for('mark_notifications_read') }}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    }).then(response => {
+        if (response.ok) {
+            location.reload();
+        }
+    });
+});
+</script>
+{% endblock %}

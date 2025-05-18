@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Список клиентов{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4 class="card-title mb-0">Клиенты</h4>
+        <a href="{{ url_for('add_customer') }}" class="btn btn-primary btn-sm">
+            Добавить клиента
+        </a>
+    </div>
+    <div class="card-body">
+        {% if customers %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Контактные данные</th>
+                            <th>Бюджет</th>
+                            <th>Проектов</th>
+                            <th>Дата добавления</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for customer in customers %}
+                            <tr>
+                                <td>{{ customer.contact_details }}</td>
+                                <td>${{ customer.budget }}</td>
+                                <td>{{ customer.projects|length }}</td>
+                                <td>{{ customer.created_at.strftime('%d.%m.%Y') }}</td>
+                                <td>
+                                    <a href="{{ url_for('add_project') }}?customer_id={{ customer.id }}" 
+                                       class="btn btn-sm btn-success">
+                                       Добавить проект
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                Нет добавленных клиентов. <a href="{{ url_for('add_customer') }}">Добавить первого клиента</a>.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

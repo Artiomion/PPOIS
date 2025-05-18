@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Добавить проект{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Добавить проект</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Название проекта</label>
+                        <input type="text" class="form-control" id="name" name="name" 
+                               pattern="[A-Za-zА-Яа-я0-9\s]{3,100}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Описание</label>
+                        <textarea class="form-control" id="description" name="description" 
+                                  rows="5" minlength="10" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="customer" class="form-label">Клиент</label>
+
+                        <!-- Отладочная информация -->
+                        {% if not customers %}
+                            <div class="alert alert-warning">
+                                Нет доступных клиентов. <a href="{{ url_for('add_customer') }}">Добавить клиента</a>
+                            </div>
+                        {% endif %}
+
+                        <select class="form-select" id="customer" name="customer" required>
+                            <option value="">Выберите клиента</option>
+                            {% for customer in customers %}
+                                <option value="{{ customer.id }}">
+                                    {{ customer.contact_details }} (Бюджет: ${{ customer.budget }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Добавить проект</button>
+                    <a href="{{ url_for('index') }}" class="btn btn-secondary">Отмена</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

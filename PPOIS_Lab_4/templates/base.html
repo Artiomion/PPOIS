@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}IT Company Management{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="d-grid min-vh-100" style="grid-template-rows: auto 1fr auto;">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">IT Company</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    {% if 'user_id' in session %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('index') }}">Главная</a>
+                        </li>
+                        {% if user.company %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('add_customer') }}">Клиенты</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('add_project') }}">Проекты</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('add_programmer') }}">Программисты</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('add_tech_support') }}">Тех поддержка</a>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                </ul>
+                <ul class="navbar-nav">
+                    {% if 'user_id' in session %}
+                        <li class="nav-item">
+                            <a class="nav-link position-relative" href="{{ url_for('view_notifications') }}">
+                                Уведомления
+                                {% set unread_count = user.notifications|selectattr('is_read', 'equalto', False)|list|length %}
+                                {% if unread_count > 0 %}
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                        {{ unread_count }}
+                                        <span class="visually-hidden">непрочитанные уведомления</span>
+                                    </span>
+                                {% endif %}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('logout') }}">Выйти</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('login') }}">Войти</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('register') }}">Регистрация</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer class="bg-dark text-white mt-5 py-3">
+        <div class="container text-center">
+            &copy; Management System
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Подтверждение для важных действий
+        document.querySelectorAll('.confirm-action').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Вы уверены?',
+                    text: button.dataset.confirmText || 'Это действие нельзя отменить',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Да, продолжить',
+                    cancelButtonText: 'Отмена'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = button.href;
+                    }
+                });
+            });
+        });
+
+        // Динамическое отображение полей для QA/разработчиков
+        document.addEventListener('DOMContentLoaded', function() {
+            const sphereSelect = document.querySelector('select[name="sphere"]');
+            if (sphereSelect) {
+                sphereSelect.addEventListener('change', function() {
+                    const sphere = this.value;
+                    const qaFields = document.getElementById('qa-fields');
+                    const devFields = document.getElementById('dev-fields');
+
+                    if (sphere === 'QA') {
+                        qaFields.style.display = 'block';
+                        devFields.style.display = 'none';
+                    } else {
+                        qaFields.style.display = 'none';
+                        devFields.style.display = 'block';
+                    }
+                });
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

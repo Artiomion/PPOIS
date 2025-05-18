@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Добавить программиста{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Добавить программиста</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Имя</label>
+                        <input type="text" class="form-control" id="name" name="name" 
+                               pattern="[A-Za-zА-Яа-я\s]{2,50}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="salary" class="form-label">Зарплата ($)</label>
+                        <input type="number" class="form-control" id="salary" name="salary" 
+                               min="1" max="999999999" oninput="this.value=this.value.slice(0,9)" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="sphere" class="form-label">Специализация</label>
+                        <select class="form-select" id="sphere" name="sphere" required>
+                            <option value="">Выберите специализацию</option>
+                            <option value="Backend">Backend-разработчик</option>
+                            <option value="Frontend">Frontend-разработчик</option>
+                            <option value="QA">QA-инженер</option>
+                            <option value="DevOps">DevOps</option>
+                            <option value="Mobile">Мобильный разработчик</option>
+                        </select>
+                    </div>
+
+                    <div id="qa-fields" style="display: none;">
+                        <div class="mb-3">
+                            <label for="test_type" class="form-label">Тип тестирования</label>
+                            <select class="form-select" id="test_type" name="test_type">
+                                <option value="Manual">Ручное тестирование</option>
+                                <option value="Automated">Автоматизированное тестирование</option>
+                                <option value="Both">Комбинированное</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="level_of_automation" class="form-label">Уровень автоматизации</label>
+                            <select class="form-select" id="level_of_automation" name="level_of_automation">
+                                <option value="Low">Низкий</option>
+                                <option value="Medium">Средний</option>
+                                <option value="High">Высокий</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="dev-fields">
+                        <div class="mb-3">
+                            <label for="language" class="form-label">Язык программирования</label>
+                            <input type="text" class="form-control" id="language" name="language">
+                        </div>
+                        <div class="mb-3">
+                            <label for="quality" class="form-label">Качество кода</label>
+                            <select class="form-select" id="quality" name="quality">
+                                <option value="Low">Низкое</option>
+                                <option value="Medium">Среднее</option>
+                                <option value="High">Высокое</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Добавить</button>
+                    <a href="{{ url_for('index') }}" class="btn btn-secondary">Отмена</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

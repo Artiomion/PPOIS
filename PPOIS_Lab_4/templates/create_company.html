@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Создать компанию{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Создать компанию</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Название компании</label>
+                        <input type="text" class="form-control" id="name" name="name" 
+                               pattern="[A-Za-zА-Яа-я0-9\s]{3,100}" 
+                               title="От 3 до 100 символов (буквы, цифры, пробелы)" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="market_cap" class="form-label">Капитализация ($)</label>
+                        <input type="number" class="form-control" id="market_cap" name="market_cap" 
+                               min="1" max="999999999" oninput="this.value=this.value.slice(0,9)" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="staff" class="form-label">Количество сотрудников</label>
+                        <input type="number" class="form-control" id="staff" name="staff" 
+                               min="1" max="999999999" oninput="this.value=this.value.slice(0,9)" required >
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Создать компанию</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

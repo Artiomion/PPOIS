@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Добавить клиента{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Добавить клиента</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="contact" class="form-label">Контактные данные</label>
+                        <input type="text" class="form-control" id="contact" name="contact"
+                               pattern="[A-Za-zА-Яа-я0-9\s@.,-]{5,100}" required>
+                        <div class="form-text">Email, телефон или другие контакты</div>
+                    <div class="mb-3">
+                        <label for="budget" class="form-label">Бюджет ($)</label>
+                        <input type="number" class="form-control" id="budget" name="budget"
+                               min="1" max="999999999"
+                               oninput="this.value=this.value.slice(0,9)"
+                               required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Добавить клиента</button>
+                        <a href="{{ url_for('index') }}" class="btn btn-secondary">Отмена</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

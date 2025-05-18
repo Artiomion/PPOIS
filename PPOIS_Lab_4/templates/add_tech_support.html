@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Добавить техподдержку{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Добавить техническую поддержку</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="area" class="form-label">Область ответственности</label>
+                        <input type="text" class="form-control" id="area" name="area" 
+                               pattern="[A-Za-zА-Яа-я0-9\s-]{3,100}" required>
+                        <div class="form-text">Например: Веб-приложения, Мобильные приложения</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tools" class="form-label">Инструменты</label>
+                        <input type="text" class="form-control" id="tools" name="tools" required>
+                        <div class="form-text">Перечислите через запятую: Zendesk, Jira, TeamViewer</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Добавить</button>
+                    <a href="{{ url_for('index') }}" class="btn btn-secondary">Отмена</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

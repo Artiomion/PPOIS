@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Список программистов{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4 class="card-title mb-0">Программисты</h4>
+        <a href="{{ url_for('add_programmer') }}" class="btn btn-primary btn-sm">
+            Добавить программиста
+        </a>
+    </div>
+    <div class="card-body">
+        {% if programmers %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Имя</th>
+                            <th>Специализация</th>
+                            <th>Зарплата</th>
+                            <th>Детали</th>
+                            <th>Дата добавления</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for programmer in programmers %}
+                            <tr>
+                                <td>{{ programmer.name }}</td>
+                                <td>{{ programmer.sphere }}</td>
+                                <td>${{ programmer.salary }}</td>
+                                <td>
+                                    {% if programmer.sphere == 'QA' %}
+                                        {{ programmer.test_type }} тестирование,
+                                        {{ programmer.level_of_automation }} уровень автоматизации
+                                    {% else %}
+                                        {{ programmer.programming_language }},
+                                        {{ programmer.code_quality }} качество кода
+                                    {% endif %}
+                                </td>
+                                <td>{{ programmer.created_at.strftime('%d.%m.%Y') }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                Нет добавленных программистов. <a href="{{ url_for('add_programmer') }}">Добавить первого программиста</a>.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

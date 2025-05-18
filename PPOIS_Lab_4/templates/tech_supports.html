@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Техническая поддержка{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4 class="card-title mb-0">Техническая поддержка</h4>
+        <a href="{{ url_for('add_tech_support') }}" class="btn btn-primary btn-sm">
+            Добавить поддержку
+        </a>
+    </div>
+    <div class="card-body">
+        {% if tech_supports %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Область</th>
+                            <th>Инструменты</th>
+                            <th>Статус</th>
+                            <th>Дата добавления</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for tech in tech_supports %}
+                            <tr>
+                                <td>{{ tech.responsibility_area }}</td>
+                                <td>{{ tech.tools_used }}</td>
+                                <td>
+                                    <span class="badge bg-{% if tech.availability %}success{% else %}danger{% endif %}">
+                                        {% if tech.availability %}Доступен{% else %}Занят{% endif %}
+                                    </span>
+                                </td>
+                                <td>{{ tech.created_at.strftime('%d.%m.%Y') }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                Нет добавленных отделов поддержки. <a href="{{ url_for('add_tech_support') }}">Добавить первый отдел</a>.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
